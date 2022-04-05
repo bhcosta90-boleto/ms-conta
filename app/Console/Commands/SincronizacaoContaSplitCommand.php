@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use PJBank\Package\Support\ConsumeSupport;
+use PJBank\Package\Support\SynchronizeTableSupport;
 
 class SincronizacaoContaSplitCommand extends Command
 {
@@ -26,8 +27,10 @@ class SincronizacaoContaSplitCommand extends Command
      *
      * @return void
      */
-    public function __construct(private ConsumeSupport $consumeSupport)
-    {
+    public function __construct(
+        private ConsumeSupport $consumeSupport,
+        private SynchronizeTableSupport $synchronizeTableSupport
+    ) {
         parent::__construct();
     }
 
@@ -38,7 +41,7 @@ class SincronizacaoContaSplitCommand extends Command
      */
     public function handle()
     {
-        $this->consumeSupport->consume('contas', [
+        $rules = [
             'credencial' => 'required',
             'chave' => 'required',
             'nome' => 'required',
@@ -48,9 +51,11 @@ class SincronizacaoContaSplitCommand extends Command
             'split' => 'nullable',
             'banco' => 'required',
             'agencia' => 'required',
-            'conta' => 'required',
-        ], "app.ms_cobrancas.table.conta_splits.*", 'credencial', function ($data) {
-            $this->consumeSupport->getSynchronizeTableSupport()->sync('contas', "credencial", $data["credencial"], [
+            'conta' => 'required'
+        ];
+
+        $this->consumeSupport->function('contas', 'app.ms_cobrancas.table.conta_splits.*', $rules, function ($data) {
+            $this->synchronizeTableSupport->sync('contas', "credencial", $data["credencial"], [
                 'credencial' => $data['credencial'],
                 'chave' => $data['chave'],
                 'banco_codigo' => $data['banco'],
