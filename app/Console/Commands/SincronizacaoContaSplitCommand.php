@@ -54,7 +54,7 @@ class SincronizacaoContaSplitCommand extends Command
             'conta' => 'required'
         ];
 
-        $this->consumeSupport->function('contas', 'app.ms_cobrancas.table.conta_splits.*', $rules, function ($data) {
+        $this->consumeSupport->function('conta_splits', 'app.ms_cobrancas.table.conta_splits.*', $rules, function ($data) {
             $this->synchronizeTableSupport->sync('contas', "credencial", $data["credencial"], [
                 'credencial' => $data['credencial'],
                 'chave' => $data['chave'],

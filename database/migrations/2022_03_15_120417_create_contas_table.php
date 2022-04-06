@@ -22,16 +22,17 @@ return new class extends Migration
             $table->string('credencial')->index();
             $table->string('chave');
             $table->string('nome');
-            $table->string('cpfcnpj');
+            $table->string('cpfcnpj', 20);
             $table->string('email')->nullable();
             $table->string('telefone')->nullable();
-            $table->string('status')->default(Conta::STATUS_PENDENTE);
+            $table->string('status')->nullable();
             $table->string('banco_codigo', 5);
             $table->string('banco_agencia', 20);
             $table->string('banco_conta', 20);
             $table->unsignedDouble('valor_taxa')->nullable();
             $table->boolean('split')->nullable();
             $table->unsignedDouble('valor_minimo')->default(7.50);
+            $table->boolean('validado')->default(false);
             $table->timestamps();
         });
     }
